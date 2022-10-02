@@ -1762,7 +1762,7 @@ O---
 
     def test_ij(self):
         self.assertEqual(Run("→→→ⅈ"), "--")
-        self.assertEqual(Run("↓↓↓ⅉ"), " \n \n|\n|")
+        self.assertEqual(Run("↓↓↓ⅉ"), "|\n|")
         
     def test_incremented_decremented_halved_doubled(self):
         self.assertEqual(Run("Ｉ⊕2.25"), "3.25")

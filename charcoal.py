@@ -563,10 +563,10 @@ an object on which all canvas drawing methods exist.
 
         """
         self.x = self.y = self.top = 0
-        self.lines = [""]
-        self.indices = [0]
-        self.lengths = [0]
-        self.right_indices = [0]
+        self.lines = []
+        self.indices = []
+        self.lengths = []
+        self.right_indices = []
         self.info = info
         self.original_input = original_input
         self.inputs = inputs
@@ -597,8 +597,15 @@ an object on which all canvas drawing methods exist.
 
     def __str__(self):
         """Returns the current state of the canvas."""
-        left = min(self.indices)
-        right = max(self.right_indices)
+        indices = [
+            index for line, index in zip(self.lines, self.indices) if line
+        ]
+        if not indices:
+            return ""
+        left = min(indices)
+        right = max(right_index
+            for line, right_index in zip(self.lines, self.right_indices) if line
+        )
         string = ""
         if not self.background:
             for i in range(len(self.lines)):
@@ -630,12 +637,10 @@ an object on which all canvas drawing methods exist.
                             )
                         )
                 string += (
-                    self.BackgroundString(
-                        self.top + i, left, self.indices[i]
-                    ) +
-                    line +
-                    ("" if self.trim else self.BackgroundString(
-                        self.top + i, self.right_indices[i], right
+                    (line and self.BackgroundString(self.top + i,
+                        left, self.indices[i]) + line) +
+                    ("" if self.trim else self.BackgroundString(self.top + i,
+                        self.right_indices[i] if line else left, right
                     )) +
                     "\n"
                 )
@@ -645,14 +650,14 @@ an object on which all canvas drawing methods exist.
                 self.lines, self.indices, self.right_indices
             ):
                 string += (
-                    self.background * (index - left) +
+                    (line and self.background * (index - left)) +
                     (
                         re.sub("\000", self.background, line)
                         if "\000" in line else line
                     ) +
                     (
-                        "" if self.trim else
-                        self.background * (right - right_index)
+                        "" if self.trim else self.background *
+                        (right - right_index if line else right - left)
                     ) +
                     "\n"
                 )
@@ -705,19 +710,6 @@ an object on which all canvas drawing methods exist.
         Deletes empty cells on all four sides of the canvas.
 
         """
-        to_delete = 0
-        while re.match("^\000*$", self.lines[to_delete]):
-            to_delete += 1
-        to_delete -= 1
-        if to_delete > 0:
-            self.lines = self.lines[to_delete:]
-            self.top += to_delete
-        to_delete = -1
-        while re.match("^\000*$", self.lines[to_delete]):
-            to_delete -= 1
-        to_delete += 1
-        if to_delete < 0:
-            self.lines = self.lines[:to_delete]
         for i in range(len(self.lines)):
             line = self.lines[i]
             match = re.match("^\000*", line)
@@ -732,6 +724,11 @@ an object on which all canvas drawing methods exist.
             if match_2_length > 0:
                 line = line[:-match_2_length]
             self.lines[i] = line
+        while self.lines and not self.lines[-1]:
+            self.lines = self.lines[:-1]
+        while self.lines and not self.lines[0]:
+            self.lines = self.lines[1:]
+            self.top += 1
 
     def Clear(self, all=True):
         """
@@ -743,10 +740,10 @@ an object on which all canvas drawing methods exist.
 
         """
         self.x = self.y = self.top = 0
-        self.lines = [""]
-        self.indices = [0]
-        self.lengths = [0]
-        self.right_indices = [0]
+        self.lines = []
+        self.indices = []
+        self.lengths = []
+        self.right_indices = []
         if all:
             self.top_scope = self.scope = Scope(lookup={
                 "γ": " !\"#$%&'()*+,-./0123456789:;<=>?@\
@@ -857,7 +854,13 @@ ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
         Adds empty lines up to the y-index of the cursor.
 
         """
-        if self.y > self.top + len(self.lines) - 1:
+        if not self.lines:
+            self.top = self.y
+            self.lines = [""]
+            self.indices = [0]
+            self.lengths = [0]
+            self.right_indices = [0]
+        elif self.y > self.top + len(self.lines) - 1:
             number = self.y - self.top - len(self.lines) + 1
             x_number = self.x - self.indices[-1]
             x_sign = Sign(x_number)
@@ -2679,10 +2682,10 @@ make a copy for each of the digits in rotations.
         old_indices = self.indices
         old_lengths = self.lengths
         self.top = 0
-        self.lines = [""]
-        self.indices = [0]
-        self.lengths = [0]
-        self.right_indices = [0]
+        self.lines = []
+        self.indices = []
+        self.lengths = []
+        self.right_indices = []
         directions = {{
             1: Direction.up_right,
             2: Direction.up,
