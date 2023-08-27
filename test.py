@@ -1496,6 +1496,10 @@ b   a   z
         self.assertEqual(Run("§⟦¹a²b³⟧²"), "--")
         self.assertEqual(Run("§⦃c¹b²a³⦄a"), "---")
         self.assertEqual(Run("Ｌ§ψ⁰"), "-")
+        self.assertEqual(Run("§abc⟦⟦²¦⁰¦¹⟧⟧"), "cab")
+        self.assertEqual(Run("§⟦¹a⟦²⟧b³⟧⟦²¦⁰⟧"), "--")
+        self.assertEqual(Run("§⟦¹a²b³⟧⟦⟦²¦⁰⟧⟧"), "--\n- ")
+        self.assertEqual(Run("≔⟦⟦³¦²¦¹⟧⟧β§≔β⟦⁰⟦²¦⁰⟧⟧⟦³¦¹⟧β"), "-  \n-- \n---")
 
     def test_ternary(self):
         self.assertEqual(Run("⎇¹¦¹÷¹¦⁰"), "-")
