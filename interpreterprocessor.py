@@ -650,15 +650,9 @@ InterpreterProcessor = {
         ),
         lambda r: vectorize(lambda left, right, c: left ** right),
         lambda r: lambda left, right, c: (
-            (left[right] if right in left else None)
-            if isinstance(left, dict) else
-            left[int(right) % len(left)]
-            if isinstance(left, list) or isinstance(left, str) else
-            (
-                getattr(left, right)
-                if isinstance(right, str) and hasattr(left, right) else
-                left[right % len(left)]  # default to iterable
-            )
+            (c.AtIndex(left, *right) if right else left)
+            if isinstance(right, list) else
+            c.AtIndex(left, right)
         ),
         lambda r: lambda left, right, c: left.append(right) or left,
         lambda r: lambda left, right, c: str(right).join(map(str, left)),

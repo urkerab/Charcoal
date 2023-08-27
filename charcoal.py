@@ -2907,18 +2907,44 @@ else set the variable with the given name to the given value.
 
         """
         if value2 is not None:
-            try:
-                value[key] = value2
-            except:
-                value[key % len(value)] = value2
+            if isinstance(key, list):
+                self.AssignAtIndex(value, value2, *key)
+            else:
+                self.AssignAtIndex(value, value2, key)
             if Info.step_canvas in self.info and isinstance(value, Cells):
-                self.RefreshFastText("Assign", self.canvas_step)
+                self.RefreshFastText("AssignAtIndex", self.canvas_step)
             elif Info.dump_canvas in self.info:
-                print("Assign")
+                print("AssignAtIndex")
                 print(str(self))
             return
 
         self.scope[key] = value
+
+    def AssignAtIndex(self, value, value2, key, *keys):
+        """
+        AssignAtIndex(value, value2, key, *keys)
+
+        Assign value2 to value multidimensionally indexed by key and keys
+
+        """
+        if isinstance(key, list):
+            if isinstance(value2, list):
+                for index, key in enumerate(key):
+                    self.AssignAtIndex(value, value2[index % len(value2)], key, *keys)
+            else:
+                for key in key:
+                    self.AssignAtIndex(value, value2, key, *keys)
+        elif keys:
+            try:
+                value = value[key]
+            except:
+                value = value[key % len(value)]
+            self.AssignAtIndex(value, value2, *keys)
+        else:
+            try:
+                value[key] = value2
+            except:
+                value[key % len(value)] = value2
 
     def InputString(self, key=None):
         """
@@ -3212,6 +3238,29 @@ the list or string.
         elif isinstance(length, float):
             length = int(length)
         return (iterable * (length and length // len(iterable) + 1))[:length]
+
+    def AtIndex(self, value, key, *keys):
+        """
+        AtIndex(value, keys)
+
+        Returns value multidimensionally indexed by key and keys.
+
+        """
+        if isinstance(key, list):
+            result = [self.AtIndex(value, key, *keys) for key in key]
+            if isinstance(value, str):
+                result = ''.join(result)
+            return result
+        result = (
+            (value[key] if key in value else None)
+            if isinstance(value, dict) else
+            value[int(key) % len(value)]
+            if isinstance(value, list) or isinstance(value, str) else
+            getattr(value, key)
+            if isinstance(key, str) and hasattr(value, key) else
+            value[int(key) % len(value)]  # default to iterable
+        )
+        return self.AtIndex(result, *keys) if keys else result
 
     def Crop(self, width, height=None):
         """
