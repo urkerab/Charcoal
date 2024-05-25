@@ -334,6 +334,46 @@ def Upper(item):
         return iter_apply(item, Upper)
 
 
+def Zip(item):
+    if isinstance(item, Expression):
+        item = item.run()
+    if isinstance(item, String):
+        item = str(item)
+    if isinstance(item, str):
+        return [c for c in item]
+    if isinstance(item, dict):
+        if not item:
+            return [item]
+        if all(isinstance(e, dict) for e in item.values()):
+            result = {}
+            for k, v in item.items():
+                for l, w in v.items():
+                    if not l in result:
+                        result[l] = {}
+                    result[l][k] = w
+            return result
+        if all(hasattr(e, "__iter__") for e in item.values()):
+            return [{k: v[i] for k, v in item.items() if i < len(v)} for i in range(max(map(len, item.values())))]
+        return [item]
+    if hasattr(item, "__iter__"):
+        if not item:
+            return [item]
+        if all(isinstance(e, str) for e in item):
+            return [''.join(e[i] for e in item if i < len(e)) for i in range(max(map(len, item)))] or [""]
+        if all(isinstance(e, dict) for e in item):
+            result = {}
+            for e in item:
+                for k, v in e.items():
+                    if not k in result:
+                        result[k] = []
+                    result[k].append(v)
+            return result
+        if all(hasattr(e, "__iter__") for e in item):
+            return [[e[i] for e in item if i < len(e)] for i in range(max(map(len, item)))]
+        return [[e] for e in item]
+    return complex(item.imag, item.real)
+
+
 def direction(dir):
     if isinstance(dir, String):
         dir = str(dir)
@@ -614,7 +654,8 @@ InterpreterProcessor = {
         lambda r: lambda item, c: Doubled(item),
         lambda r: lambda item, c: Halved(item),
         lambda r: lambda item, c: eval(item),
-        lambda r: lambda item, c: SquareRoot(item)
+        lambda r: lambda item, c: SquareRoot(item),
+        lambda r: lambda item, c: Zip(item),
     ],
     CT.Binary: [
         lambda r: lambda left, right, c: c.Add(left, right),

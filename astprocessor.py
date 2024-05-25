@@ -180,7 +180,8 @@ ASTProcessor = {
         lambda r: [lambda s="": r[0] + ": Doubled"],
         lambda r: [lambda s="": r[0] + ": Halved"],
         lambda r: [lambda s="": r[0] + ": eval"],
-        lambda r: [lambda s="": r[0] + ": Square root"]
+        lambda r: [lambda s="": r[0] + ": Square root"],
+        lambda r: [lambda s="": r[0] + ": Zip"],
     ],
     CT.Binary: [
         lambda r: [lambda s="": r[0] + ": Sum"],

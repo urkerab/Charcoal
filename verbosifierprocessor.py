@@ -143,6 +143,7 @@ UnicodeGrammars = {
         lambda r: [("o", "Halved")],
         lambda r: [("o", "PythonEvaluate")],
         lambda r: [("o", "SquareRoot")]
+        lambda r: [("o", "Zip")]
     ],
     CT.Binary: [
         lambda r: [("o", "Plus")],
