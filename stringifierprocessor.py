@@ -138,8 +138,8 @@ StringifierProcessor = {
     ],
     CT.Unary: [
         (lambda i: lambda r: [("o", "±±Ｌ¬Ｉ‽‽ＶＶ⊟↧↥⌊⌊⌊⌈⌈⌈⌈℅℅℅℅⮌⮌≕≕″‴～↔↔\
-ΣΠ⊕⊖⊗⊘₂₂"[i])])(i)
-        for i in range(40)
+ΣΠ⊕⊖⊗⊘₂₂Ｚ"[i])])(i)
+        for i in range(41)
     ] + [
         lambda r: [("o", "✂"), ("!", "e"), ("!", "e")],
         lambda r: [("o", "…")],

@@ -1696,6 +1696,19 @@ cast basestring 'asdf' 62", verbose=True), "2491733")
 --- 
 ----""")
 
+    def test_zip(self):
+        self.assertEqual(Run("Ｚ¹"), "1j")
+        self.assertEqual(Run("Zip ['abc', 'de', 'f']", verbose=True), "adf\nbe \nc  ")
+        self.assertEqual(Run("StringMap 1 Zip []", verbose=True), "[[]]")
+        self.assertEqual(Run("StringMap 1 Zip [[]]", verbose=True), "[]")
+        self.assertEqual(Run("StringMap 1 Zip [[1, 2, 3], [4, 5], [6]]", verbose=True), "[[1, 4, 6], [2, 5], [3]]")
+        self.assertEqual(Run("StringMap 1 Zip {}", verbose=True), "[{}]")
+        self.assertEqual(Run("StringMap 1 Zip [{}]", verbose=True), "{}")
+        self.assertEqual(Run("StringMap 1 Zip [{1: 'a', 2: 'b'}, {0: 'c', 2: 'd'}, {0: 'e', 1: 'f'}]", verbose=True), "{1: ['a', 'f'], 2: ['b', 'd'], 0: ['c', 'e']}")
+        self.assertEqual(Run("StringMap 1 Zip {'a': [1, 2], 'b': [3, 4], 'c': [5, 6]}", verbose=True), "[{'a': 1, 'b': 3, 'c': 5}, {'a': 2, 'b': 4, 'c': 6}]")
+        self.assertEqual(Run("StringMap 1 Zip {0: 'ab', 1: 'cd', 2: 'ef'}", verbose=True), "[{0: 'a', 1: 'c', 2: 'e'}, {0: 'b', 1: 'd', 2: 'f'}]")
+        self.assertEqual(Run("StringMap 1 Zip {0: {0: 'a', 1: 'b', 2: 'c'}, 1: {1: 'd', 2: 'e'}, 2: {2: 'f'}}", verbose=True), "{0: {0: 'a'}, 1: {0: 'b', 1: 'd'}, 2: {0: 'c', 1: 'e', 2: 'f'}}")
+
     def test_sqrt(self):
         self.assertEqual(Run("sqrt 9", verbose=True), "---")
         self.assertEqual(Run("sqrt 10", verbose=True), "---")

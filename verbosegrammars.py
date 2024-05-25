@@ -172,7 +172,7 @@ VerboseGrammars = {
         ["RepeatedNull"], ["BitwiseNot"],
         ["Absolute"], ["abs"], ["Sum"], ["Product"],
         ["Incremented"], ["Decremented"], ["Doubled"],
-        ["Halved"], ["SquareRoot"], ["sqrt"], ["Slice"],
+        ["Halved"], ["SquareRoot"], ["sqrt"], ["Zip"], ["Slice"],
         ["Range"], ["InclusiveRange"], ["PythonEvaluate"], ["pyeval"]
     ],
     CT.Binary: [
